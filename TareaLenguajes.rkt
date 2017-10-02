@@ -106,3 +106,35 @@ sus hijos como vacios|#
 		(eliminaNodo x (cdr arbol))
 		(cons (car arbol)(eliminaNodo x (cdr arbol))))))
 
+;----------------------------------------------------------------------------------------------------------------
+; algoritmo de caminos mínimos
+; este algorito se ejecutara de al comienzo de la ejecucion , pero sin afectar la creacion de los otros codigos
+
+#| este require llamado PLaneT,que es framework viene con un gestor de paquetes, integrado
+ con el sistema de módulos, lo que permite a los usuarios importar y usar librerías de
+ terceros de forma totalmente transparente
+|#
+(require (planet jaymccarthy/dijkstra:1:2))
+
+; define la estructura del grafo con su valor , en este caso de a hasta d, y los costos de las aristas a nodos 
+(define nodo-arista-grafo
+  '([a . ((b 5)(c 14))]
+    [b . ((c 12)(d 11))]
+    [c . ((d 3))]
+    [d . (())]))
+
+; se define el valor u/o nombre del nodo asociando
+;la definicion de la estructura del grafo , dando costo de la arista y el nodo final que se va a buscar el camino  
+(define (valorNodo n) 
+  (cond [(assoc n nodo-arista-grafo) => rest] ['()]))
+(define arista-costo second)
+(define nodo-final first)
+ 
+(match/values (shortest-path valorNodo arista-costo nodo-final 'a (λ(n) (eq? n 'd)))
+ [(distinto anterior)
+  (displayln (~a "Distancia desde a: " (for/list ([(n d) distinto]) (list n d))))
+  (displayln (~a "Camino mas corto segun los costos de las aristas desde nodo a "
+             (let loop ([path '(d)])
+               (cond [(eq? (first path) 'a) path]
+                     [(loop (cons (hash-ref anterior (first path)) path))]))))])
+ 
